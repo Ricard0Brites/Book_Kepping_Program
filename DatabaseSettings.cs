@@ -31,14 +31,14 @@ namespace Book_Kepping
 
         private void B_Verify_Click(object sender, EventArgs e)
         {
-            //Saves the Information
+            //Saves the Information (overwrites whatever data is in the file)
             TextWriter txt = new StreamWriter(C_Relative_Path.GetRelativePath(true) + "src\\CM_DB.txt");
             txt.Write(TB_DatabaseName.Text);
             txt.Close();
             TextWriter txt2 = new StreamWriter(C_Relative_Path.GetRelativePath(true) + "src\\CM_TB.txt");
             txt2.Write(TB_TableName.Text);
             txt2.Close();
-
+            GC.Collect();
             DB_Control_Logic.Database_Info.SetDatabaseName(TB_DatabaseName.Text);
             DB_Control_Logic.Database_Info.SetTableName(TB_TableName.Text);
 
