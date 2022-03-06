@@ -19,7 +19,6 @@ namespace Book_Kepping.DB_Control_Logic
             {
                 return null;
             };
-            
         }
     }
 }

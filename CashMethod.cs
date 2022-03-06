@@ -34,7 +34,6 @@ namespace Book_Kepping
         void CashMethod_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) Console.WriteLine(file);
             droppedFile = files[0];
             UpdateSupportingFileName();
         }
@@ -56,21 +55,19 @@ namespace Book_Kepping
         {
             if (CheckDataFields())
             {
-                //if the directory doesn't exist it creates it
+                //if the directory doesn't exist it's created
                 if (!Directory.Exists(relPath + PathFriendlyDate() + "\\src"))
                 {
                     CreateDirectory();
                 }
-                //if the connection to the Database is successfull we send the information
+
+                //if the connection to the Database is successfull the info is sent
                 if (DB_Control_Logic.DataRequest.TestDatabaseConnection())
                 {
                     CopyFile(droppedFile);
-                    DB_Control_Logic.DataRequest.InsertBookKeepingEntry
-                        (GetMovementType(),
-                        TB_purchase_description.Text,
-                        float.Parse(TB_purchase_amount.Text),
-                        dateTimePicker2.Value,
-                        C_Relative_Path.GetRelativePath(true) + PathFriendlyDate() + "\\" + (DB_Control_Logic.DataRequest.GetLastCashID() + 1).ToString() + GetFileExtension(droppedFile));
+                    DB_Control_Logic.DataRequest.InsertBookKeepingEntry(GetMovementType(),TB_purchase_description.Text,float.Parse(TB_purchase_amount.Text),dateTimePicker2.Value,C_Relative_Path.GetRelativePath(true) + PathFriendlyDate() + "\\" + (DB_Control_Logic.DataRequest.GetLastCashID() + 1).ToString() + GetFileExtension(droppedFile));
+
+                    //Resets the text Fields
                     TB_purchase_amount.Text = "";
                     TB_purchase_description.Text = "";
                     TB_supporting_file_name.Text = "";
@@ -100,18 +97,19 @@ namespace Book_Kepping
         //places the file in the directory
         private void CopyFile(string fileToCopy)
         {
+            //the files get named [ID].[extension] ex: 1.txt
             string path = C_Relative_Path.GetRelativePath(true) + PathFriendlyDate() + "\\";
             File.Copy(fileToCopy, path + (DB_Control_Logic.DataRequest.GetLastCashID() + 1).ToString() + GetFileExtension(fileToCopy));
-            
         }
 
 
-        //Gets the name of the file
+        //Gets the file extension
         private string GetFileExtension(string filePath)
         {
             int fileExtensionIndexStart = 0;
             char[] charFilePath = filePath.ToCharArray();
             string fileExtension = "";
+
             //gets the index where the file extension starts
             for(int i = (charFilePath.Length - 1); i >= 0; i--)
             {
@@ -122,12 +120,12 @@ namespace Book_Kepping
                 }
             }
 
-            //Makes the array of chars into a string
+            //Makes the array of chars into a string from the start of the extension
             for(int i = fileExtensionIndexStart; i <= (charFilePath.Length - 1); i++)
             {
                 fileExtension += charFilePath[i];
             }
-
+            GC.Collect();
             return fileExtension;
         }
 
@@ -146,10 +144,7 @@ namespace Book_Kepping
             {
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
         //get the movement type
@@ -159,10 +154,7 @@ namespace Book_Kepping
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }
